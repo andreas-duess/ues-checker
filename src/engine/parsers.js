@@ -3,7 +3,7 @@
  * Uses locally bundled fflate and pdfjs-dist — zero external CDN requests, zero uploads.
  */
 
-import { unzipSync, strFromU8 } from 'fflate';
+import { extractDocxText } from './docx.js';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
@@ -44,69 +44,7 @@ export async function parseDocumentFile(file) {
   throw new Error(`Unsupported file type (.${ext || 'unknown'}). Use .docx, .pdf, .txt, or .md.`);
 }
 
-/**
- * Pure client-side DOCX parser: unzips word/document.xml via fflate
- * and reconstructs clean paragraphs using the browser's native DOMParser.
- */
-export function extractDocxText(arrayBuffer) {
-  let files;
-  try {
-    files = unzipSync(new Uint8Array(arrayBuffer));
-  } catch {
-    throw new Error('Could not open .docx archive. Make sure the file is not password-protected or corrupted.');
-  }
-
-  const docXmlBytes = files['word/document.xml'];
-  if (!docXmlBytes) {
-    throw new Error('Missing word/document.xml inside this .docx file.');
-  }
-
-  const xmlStr = strFromU8(docXmlBytes);
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xmlStr, 'application/xml');
-
-  if (xmlDoc.querySelector('parsererror')) {
-    throw new Error('Could not read XML inside this .docx file.');
-  }
-
-  const paragraphs = [];
-  const pNodes = xmlDoc.getElementsByTagName('w:p');
-
-  for (let i = 0; i < pNodes.length; i++) {
-    const pNode = pNodes[i];
-    const parts = [];
-    collectTextNodes(pNode, parts);
-    const joined = parts.join('').replace(/[ \t]+/g, ' ').trim();
-    if (joined) paragraphs.push(joined);
-  }
-
-  if (!paragraphs.length) {
-    throw new Error('No readable text found in this .docx file.');
-  }
-
-  return paragraphs.join('\n\n');
-}
-
-function collectTextNodes(node, parts) {
-  const children = node.childNodes;
-  for (let i = 0; i < children.length; i++) {
-    const child = children[i];
-    if (child.nodeType !== 1) continue;
-    const tag = child.nodeName;
-    if (tag === 'w:t') {
-      parts.push(child.textContent || '');
-    } else if (tag === 'w:tab') {
-      parts.push(' ');
-    } else if (tag === 'w:br' || tag === 'w:cr') {
-      parts.push('\n');
-    } else if (tag === 'w:delText') {
-      // Skip deleted tracked-change text in Word!
-      continue;
-    } else if (child.childNodes && child.childNodes.length) {
-      collectTextNodes(child, parts);
-    }
-  }
-}
+export { extractDocxText };
 
 /**
  * Pure client-side PDF text extraction using locally bundled pdf.js worker.
@@ -190,9 +128,11 @@ function reconstructPdfParagraphs(lines) {
       paragraphs.push(current.trim());
       current = curr.text;
     } else {
-      // Rejoin hyphenated line breaks cleanly
+      // A line ending in a hyphen joins without a space and keeps the hyphen:
+      // Word-exported PDFs rarely auto-hyphenate, so "fastest-" / "growing" is
+      // almost always a real compound, not a split word.
       if (/[a-z]-$/.test(current) && /^[a-z]/.test(curr.text)) {
-        current = `${current.slice(0, -1)}${curr.text}`;
+        current = `${current}${curr.text}`;
       } else {
         current = `${current} ${curr.text}`;
       }

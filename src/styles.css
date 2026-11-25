@@ -355,7 +355,6 @@ input {
   font-size: var(--d4);
   line-height: 1.3;
   color: var(--on-ink);
-  transition: opacity 0.15s ease;
 }
 
 .hero-qa-chev {
@@ -368,8 +367,11 @@ input {
   transform: rotate(180deg);
 }
 
+/* duess.com QARow.astro */
 .hero-qa-row summary:hover .hero-qa-q {
-  opacity: 0.82;
+  text-decoration: underline;
+  text-decoration-color: var(--amber-text);
+  text-underline-offset: 4px;
 }
 
 .hero-qa-a {

@@ -258,13 +258,16 @@ function renderResults(result) {
   const { meta, scores, flags, paragraphs } = result;
   const verdictClass = `verdict-${scores.verdict.level}`;
 
+  // Each pill counts the sentences it highlights, so the number matches what lights up.
+  const allSentences = paragraphs.flatMap((p) => p.sentences);
+  const countMatching = (filter) => allSentences.filter((s) => sentenceMatchesFilter(s, filter)).length;
   const filterCounts = {
     all: meta.substantiveSentenceCount,
-    flagged: scores.verbatimCount + scores.lightEditCount,
+    flagged: countMatching('flagged'),
     verbatim: scores.verbatimCount,
     light_edit: scores.lightEditCount,
-    dates: flags.staleDates.length,
-    metrics: flags.unchangedMetrics.length,
+    dates: countMatching('dates'),
+    metrics: countMatching('metrics'),
   };
 
   const paraHtml = paragraphs
@@ -696,7 +699,10 @@ function bindEvents() {
 
   app.querySelectorAll('[data-dropzone]').forEach((card) => {
     const side = card.dataset.dropzone;
+    // Only take over file drags; dragged text falls through to the textarea as usual.
+    const isFileDrag = (e) => Array.from(e.dataTransfer?.types || []).includes('Files');
     card.addEventListener('dragover', (e) => {
+      if (!isFileDrag(e)) return;
       e.preventDefault();
       card.classList.add('is-dragover');
     });
@@ -704,6 +710,7 @@ function bindEvents() {
       if (!card.contains(e.relatedTarget)) card.classList.remove('is-dragover');
     });
     card.addEventListener('drop', (e) => {
+      if (!isFileDrag(e)) return;
       e.preventDefault();
       card.classList.remove('is-dragover');
       const file = e.dataTransfer?.files?.[0];
@@ -753,7 +760,8 @@ function bindEvents() {
       a.href = url;
       a.download = `ues-copy-forward-checklist-FY${state.targetCycle}.md`;
       a.click();
-      URL.revokeObjectURL(url);
+      // Revoking straight after click() can cancel the download in Firefox.
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
   });
 
