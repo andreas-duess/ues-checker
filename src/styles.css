@@ -1284,21 +1284,155 @@ input {
   flex-wrap: wrap;
 }
 
-.footer-support {
+.footer-base {
   width: 100%;
   padding-top: 1.15rem;
   border-top: 1px solid var(--edge);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem 1.5rem;
+  gap: 0.75rem 1.75rem;
   flex-wrap: wrap;
+  font-size: var(--t-2xs);
   color: var(--on-ink-mute);
 }
 
-.footer-support strong {
+.footer-legal {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-legal a {
+  font-size: var(--t-2xs);
+}
+
+.footer-legal a[aria-current='page'] {
+  color: var(--on-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--amber);
+  text-underline-offset: 3px;
+}
+
+.footer-help {
+  margin-left: auto;
+}
+
+.footer-help strong {
   color: var(--on-ink);
   font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .footer-help {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Legal pages (/privacy-policy/ and /terms/) — mirrors duess.com legal styling */
+.legal-main {
+  flex: 1;
+  background: var(--paper);
+}
+
+.legal-head {
+  padding-top: clamp(2.5rem, 4vw, 3.75rem);
+  padding-bottom: 1.5rem;
+}
+
+.legal-head .inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.eyebrow.mute {
+  color: var(--ink-mute);
+}
+
+.legal-head h1 {
+  margin: 0;
+  font-size: var(--d2);
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-d2);
+  color: var(--ink);
+}
+
+.head-rule {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 0.75rem 0 0;
+}
+
+.legal-body {
+  padding-bottom: clamp(3rem, 5vw, 4.75rem);
+}
+
+.prose {
+  max-width: 72ch;
+}
+
+.prose section {
+  margin-bottom: 2.5rem;
+}
+
+.prose h2 {
+  margin: 0 0 0.9rem;
+  font-size: var(--d4);
+  line-height: 1.2;
+  letter-spacing: var(--ls-d3);
+  color: var(--ink);
+}
+
+.prose h3 {
+  margin: 1.5rem 0 0.55rem;
+  font-family: var(--font-body);
+  font-size: var(--t-md);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+
+.prose p {
+  margin: 0 0 1rem;
+  font-size: var(--t-base);
+  line-height: 1.75;
+  color: var(--ink-soft);
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 1rem 1.25rem;
+  padding: 0;
+}
+
+.prose li {
+  margin-bottom: 0.5rem;
+  font-size: var(--t-base);
+  line-height: 1.75;
+  color: var(--ink-soft);
+}
+
+.prose li::marker {
+  color: var(--amber-deep);
+}
+
+.prose a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--amber-deep);
+  text-underline-offset: 3px;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  color: var(--ink);
 }
 
 /* Responsive */

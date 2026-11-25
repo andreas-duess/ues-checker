@@ -643,8 +643,13 @@ function render() {
           <a href="https://duess.com/ai-policy/#fas" target="_blank" rel="noopener">One-Page FAS AI Policy</a>
           <a href="https://github.com/andreas-duess/ues-checker" target="_blank" rel="noopener">GitHub</a>
         </div>
-        <div class="footer-support">
-          <span><strong>Help and support:</strong> Questions or feedback? Email <a href="mailto:andreas@duess.com">andreas@duess.com</a>.</span>
+        <div class="footer-base">
+          <span>&copy; 2026 Duess Strategies Inc.</span>
+          <ul class="footer-legal">
+            <li><a href="/privacy-policy/">Privacy Policy</a></li>
+            <li><a href="/terms/">Terms of Use</a></li>
+          </ul>
+          <span class="footer-help"><strong>Help and support:</strong> Questions or feedback? Email <a href="mailto:andreas@duess.com">andreas@duess.com</a>.</span>
         </div>
       </div>
     </footer>
