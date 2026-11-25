@@ -330,6 +330,65 @@ input {
   color: var(--amber);
 }
 
+/* Expandable Q&A inside hero — mirrors duess.com QARow.astro (.ink variant) */
+.hero-qa {
+  width: 100%;
+  max-width: 58ch;
+  margin-top: 0.65rem;
+  border-top: 1px solid var(--edge);
+}
+
+.hero-qa-row {
+  border-bottom: 1px solid var(--edge);
+}
+
+.hero-qa-row summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.95rem 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.hero-qa-row summary::-webkit-details-marker {
+  display: none;
+}
+
+.hero-qa-q {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-size: var(--d4);
+  line-height: 1.3;
+  color: var(--on-ink);
+}
+
+.hero-qa-chev {
+  flex: none;
+  color: var(--amber);
+  transition: transform 0.2s ease;
+}
+
+.hero-qa-row[open] .hero-qa-chev {
+  transform: rotate(180deg);
+}
+
+.hero-qa-row summary:hover .hero-qa-q {
+  text-decoration: underline;
+  text-decoration-color: var(--amber);
+  text-underline-offset: 4px;
+}
+
+.hero-qa-a {
+  margin: 0;
+  padding: 0 0 1.2rem;
+  font-size: var(--t-sm);
+  line-height: 1.65;
+  color: var(--on-ink-soft);
+}
+
 /* Workbench (Paper band) */
 .workbench {
   padding-block: clamp(2.25rem, 4.5vw, 3.5rem);
@@ -1248,6 +1307,23 @@ input {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
+}
+
+.footer-support {
+  width: 100%;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--edge);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  flex-wrap: wrap;
+  color: var(--on-ink-mute);
+}
+
+.footer-support strong {
+  color: var(--on-ink);
+  font-weight: 500;
 }
 
 /* Responsive */

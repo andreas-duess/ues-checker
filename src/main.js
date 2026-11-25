@@ -10,6 +10,22 @@ const SENSITIVITY_PRESETS = {
 };
 
 const ARROW_RIGHT = `<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`;
+const CHEVRON_DOWN = `<svg class="hero-qa-chev" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" /></svg>`;
+
+const HERO_FAQS = [
+  {
+    q: 'What happens to my data?',
+    a: 'Nothing leaves your computer. The files you drop in and the text you paste are read and compared locally inside this browser tab. Nothing is uploaded, stored on a server, logged, or sent to any third party. When you close or refresh the tab, it is gone.',
+  },
+  {
+    q: 'Is this AI?',
+    a: 'No. The checker uses deterministic text matching, not a language model. It compares sentence patterns, word overlap, stale fiscal-year dates, repeated numbers, and paragraph length directly in your browser. Because no AI sits behind it, there is no hallucination risk and no external API receiving your UES text.',
+  },
+  {
+    q: 'System requirements',
+    a: 'Works on any current desktop or mobile browser (Chrome, Edge, Safari, or Firefox, versions from 2024 onward) on macOS, Windows, iOS, or Linux. Reads .docx, text-based .pdf exports, .txt, .md, and pasted text. Scanned image PDFs without selectable text need OCR first, and legacy .doc files should be saved as .docx in Word.',
+  },
+];
 
 const state = {
   priorText: '',
@@ -26,6 +42,7 @@ const state = {
   filter: 'all',
   selectedSentenceId: null,
   copyConfirm: false,
+  openFaqs: new Set(),
 };
 
 const app = document.getElementById('app');
@@ -557,6 +574,18 @@ function render() {
           <li>Flags unchanged stats &amp; unquantified paragraphs</li>
           <li>Exports a printable PDF or Markdown checklist</li>
         </ul>
+        <div class="hero-qa">
+          ${HERO_FAQS.map(
+            (item, i) => `
+            <details class="hero-qa-row" data-faq-index="${i}" ${state.openFaqs.has(i) ? 'open' : ''}>
+              <summary>
+                <span class="hero-qa-q">${esc(item.q)}</span>
+                ${CHEVRON_DOWN}
+              </summary>
+              <p class="hero-qa-a">${esc(item.a)}</p>
+            </details>`
+          ).join('')}
+        </div>
       </div>
     </section>
 
@@ -620,6 +649,9 @@ function render() {
           <a href="https://duess.com/ai-policy/#fas" target="_blank" rel="noopener">One-Page FAS AI Policy</a>
           <a href="https://github.com/andreas-duess/ues-checker" target="_blank" rel="noopener">GitHub</a>
         </div>
+        <div class="footer-support">
+          <span><strong>Help and support:</strong> Questions or feedback? Email <a href="mailto:andreas@duess.com">andreas@duess.com</a>.</span>
+        </div>
       </div>
     </footer>
   `;
@@ -628,6 +660,14 @@ function render() {
 }
 
 function bindEvents() {
+  app.querySelectorAll('[data-faq-index]').forEach((el) => {
+    el.addEventListener('toggle', () => {
+      const idx = Number(el.dataset.faqIndex);
+      if (el.open) state.openFaqs.add(idx);
+      else state.openFaqs.delete(idx);
+    });
+  });
+
   app.querySelectorAll('[data-textarea]').forEach((el) => {
     el.addEventListener('input', (e) => {
       const side = e.currentTarget.dataset.textarea;
