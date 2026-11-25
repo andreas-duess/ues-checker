@@ -1339,7 +1339,6 @@ input {
 }
 
 .footer-help strong {
-  color: var(--on-ink);
   font-weight: 500;
 }
 

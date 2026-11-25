@@ -636,15 +636,9 @@ function render() {
 
     <footer class="site-footer">
       <div class="inner footer-inner">
-        <div>
-          Built by <a href="https://duess.com/about/" target="_blank" rel="noopener">Andreas Duess</a> ·
-          <a href="https://duess.com/for-usaedc-members/" target="_blank" rel="noopener">Duess Strategies</a> (USAEDC member).
-          Open source under MIT.
-        </div>
         <div class="footer-links">
           <a href="https://duess.com/for-usaedc-members/" target="_blank" rel="noopener">AI for FAS Cooperators</a>
           <a href="https://duess.com/ai-policy/#fas" target="_blank" rel="noopener">One-Page FAS AI Policy</a>
-          <a href="https://github.com/andreas-duess/ues-checker" target="_blank" rel="noopener">GitHub</a>
         </div>
         <div class="footer-base">
           <span>&copy; 2026 Duess Strategies Inc.</span>

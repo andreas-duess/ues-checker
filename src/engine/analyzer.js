@@ -372,7 +372,10 @@ export function findStaleDates(sentence, targetCycle = 2027) {
     }
   }
 
-  // 3. Standalone calendar years older than targetCycle - 1 (e.g. 2024 or 2025 for FY2027)
+  // 3. Standalone calendar years older than targetCycle - 1 (e.g. 2024 or 2025 for FY2027).
+  // Last year on its own (2026 for FY2027) is not flagged: an application written that
+  // year cites its latest figures all the time. Pass 1 still catches it in future-tense
+  // phrasing ("will host ... in 2026").
   const yearRe = /\b(20\d{2})\b/g;
   while ((match = yearRe.exec(sentence)) !== null) {
     const raw = match[1];
@@ -396,7 +399,7 @@ export function findStaleDates(sentence, targetCycle = 2027) {
       flags.push({
         token: raw,
         year: yr,
-        severity: yr <= targetCycle - 2 ? 'medium' : 'low',
+        severity: 'medium',
         reason: `Standalone ${raw} reference — verify whether newer data is available for FY${targetCycle}`,
       });
     }

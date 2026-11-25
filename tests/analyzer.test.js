@@ -145,3 +145,10 @@ test('computeWordDiff highlights exact added and removed words', () => {
   assert.ok(diff.draftTokens.some((t) => t.text === '4' && t.type === 'added'));
   assert.ok(diff.draftTokens.some((t) => t.text === '210' && t.type === 'added'));
 });
+
+test('findStaleDates leaves plain last-year figures alone but flags older years as medium', () => {
+  assert.deepEqual(findStaleDates('Exports reached $40 million in 2026.', 2027), []);
+  const older = findStaleDates('Exports reached $31 million in 2024.', 2027);
+  assert.equal(older.length, 1);
+  assert.equal(older[0].severity, 'medium');
+});
