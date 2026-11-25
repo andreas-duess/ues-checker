@@ -11,6 +11,21 @@ const ABBREVIATIONS = new Set([
   'p', 'pp', 'sec', 'fy', 'cy', 'my',
 ]);
 
+// Abbreviations that can close a sentence ("...exports to the U.S. The...").
+const SENTENCE_END_ABBREVIATIONS = new Set([
+  'u.s', 'u.s.a', 'u.k', 'e.u', 'inc', 'ltd', 'corp', 'co', 'etc',
+]);
+
+// Capitalised words that start a new sentence rather than continue a name.
+const SENTENCE_STARTERS = new Set([
+  'The', 'This', 'That', 'These', 'Those', 'In', 'On', 'At', 'For', 'From', 'During',
+  'Our', 'We', 'It', 'Its', 'They', 'Their', 'There', 'A', 'An', 'As', 'By', 'With',
+  'While', 'However', 'Additionally', 'Also', 'Since', 'Through', 'Over', 'Under',
+  'After', 'Before', 'Despite', 'Although', 'Because', 'Today', 'Currently', 'Overall',
+  'Furthermore', 'Moreover', 'Meanwhile', 'Each', 'All', 'Most', 'Many', 'Several',
+  'Such', 'To', 'If', 'When', 'Following', 'Building',
+]);
+
 const STOP_WORDS = new Set([
   'the', 'and', 'for', 'that', 'with', 'from', 'this', 'will', 'have', 'been',
   'were', 'are', 'was', 'their', 'they', 'them', 'into', 'over', 'also', 'more',
@@ -128,8 +143,11 @@ export function splitSentences(paragraph) {
       if (lastTokenMatch) {
         const token = lastTokenMatch[1].toLowerCase().replace(/^\.+/, '');
         if (ABBREVIATIONS.has(token) || /^([a-z]\.)+[a-z]?$/.test(token)) {
-          // Allow sentence break after U.S. only if next word starts a new clause/sentence? Usually U.S. is mid-sentence.
-          continue;
+          // "U.S.", "Inc." etc. can also end a sentence. Break only when the next word is a
+          // typical sentence opener, so "U.S. Grains Council" and "U.S. Department" stay whole.
+          const nextWord = clean.slice(j).match(/^\s+([A-Za-z]+)/)?.[1];
+          const canEnd = SENTENCE_END_ABBREVIATIONS.has(token) && before.split(/\s+/).length >= 3;
+          if (!(canEnd && nextWord && SENTENCE_STARTERS.has(nextWord))) continue;
         }
       }
     }
@@ -407,10 +425,10 @@ export function extractMetrics(text) {
       kind: 'currency',
       re: /(?:US)?\$\s*\d[\d,]*(?:\.\d+)?(?:\s*(?:billion|million|thousand|bn|mn|m|k|b)\b)?/gi,
     },
-    // Percentages: 14.5%, 22 percent
+    // Percentages: 14.5%, 22 percent, 22 per cent, 22 pct
     {
       kind: 'percent',
-      re: /\b\d+(?:\.\d+)?(?:\s*%|\s+percent\b)/gi,
+      re: /\b\d+(?:\.\d+)?(?:\s*%|\s+(?:percent|per\s+cent|pct)\b)/gi,
     },
     // Quantified nouns: 42 importers, 14,500 MT, 12 trade shows
     {
@@ -424,12 +442,13 @@ export function extractMetrics(text) {
     let match;
     while ((match = re.exec(text)) !== null) {
       const raw = match[0].replace(/\s+/g, ' ').trim();
-      const canonical = raw
-        .toLowerCase()
-        .replace(/^us\$/, '$')
-        .replace(/\s+/g, ' ')
-        .replace(/\bpercent\b/, '%')
-        .replace(/\s+%/, '%');
+      const canonical = kind === 'currency'
+        ? canonicalCurrency(raw)
+        : raw
+          .toLowerCase()
+          .replace(/\s+/g, ' ')
+          .replace(/\s*\b(?:percent|per cent|pct)\b/, '%')
+          .replace(/\s+%/, '%');
 
       // Skip trivial 1-digit quantities like "1 country" unless currency/percent
       if (kind === 'quantity') {
@@ -444,6 +463,25 @@ export function extractMetrics(text) {
     }
   }
   return metrics;
+}
+
+const CURRENCY_UNITS = {
+  k: 1e3, thousand: 1e3,
+  m: 1e6, mn: 1e6, million: 1e6,
+  b: 1e9, bn: 1e9, billion: 1e9,
+};
+
+/**
+ * One canonical form per dollar value, so $18.4M, $18.4 million and
+ * US$18,400,000 all compare equal: "$18.4 million", "$125,000".
+ */
+function canonicalCurrency(raw) {
+  const m = raw.toLowerCase().match(/\$\s*([\d,]+(?:\.\d+)?)\s*([a-z]+)?/);
+  if (!m) return raw.toLowerCase();
+  const value = Math.round(Number(m[1].replace(/,/g, '')) * (CURRENCY_UNITS[m[2]] || 1));
+  if (value >= 1e9) return `$${Number((value / 1e9).toFixed(4))} billion`;
+  if (value >= 1e6) return `$${Number((value / 1e6).toFixed(4))} million`;
+  return `$${value.toLocaleString('en-US')}`;
 }
 
 function hasQuantifiedEvidence(text) {

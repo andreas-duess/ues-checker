@@ -19,6 +19,30 @@ test('splitSentences preserves U.S. abbreviations and decimals', () => {
   assert.match(sents[1], /^Dr\. Smith/);
 });
 
+test('splitSentences breaks after a sentence-ending U.S. but keeps U.S. names whole', () => {
+  assert.deepEqual(
+    splitSentences('We ship premium grain to buyers across the U.S. The market grew in 2026.'),
+    ['We ship premium grain to buyers across the U.S.', 'The market grew in 2026.']
+  );
+  assert.equal(splitSentences('Demand rose after the U.S. Grains Council hosted buyers.').length, 1);
+  assert.equal(splitSentences('Funding came from the U.S. Department of Agriculture in 2026.').length, 1);
+  assert.equal(splitSentences('U.S. The figures are preliminary.').length, 1);
+  assert.equal(splitSentences('Contracts were signed with Acme Foods Inc. In 2026, volumes doubled.').length, 2);
+});
+
+test('extractMetrics treats $18.4M, $18.4 million and US$18,400,000 as the same figure', () => {
+  const canon = (s) => extractMetrics(s)[0]?.canonical;
+  assert.equal(canon('$18.4M'), '$18.4 million');
+  assert.equal(canon('US$18,400,000'), '$18.4 million');
+  assert.equal(canon('$125k'), canon('$125,000'));
+  assert.equal(canon('$2.1bn'), canon('$2.1 billion'));
+  assert.equal(canon('22 pct'), '22%');
+  assert.equal(canon('22 per cent'), '22%');
+
+  const result = analyzeUES('Sales reached $18.4M in Vietnam last cycle.', 'Sales again reached $18.4 million across Vietnam.');
+  assert.ok(result.flags.unchangedMetrics.some((m) => m.canonical === '$18.4 million'));
+});
+
 test('detects verbatim copy-forward and template number-swaps distinctly', () => {
   const prior = `
     Southeast Asia remains one of the fastest-growing destinations for U.S. specialty grains and milled bakery ingredients.
