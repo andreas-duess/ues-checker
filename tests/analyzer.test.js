@@ -48,6 +48,34 @@ test('findStaleDates catches leftover FYs and future-stale years while allowing 
   assert.equal(historical.length, 0);
 });
 
+test('findStaleDates flags upcoming / planned for / scheduled for / launching in as high', () => {
+  for (const s of [
+    'The upcoming 2025 trade mission targets Vietnam.',
+    'A buyer mission is planned for 2025 in Manila.',
+    'The seminar series is scheduled for FY2025 in Seoul.',
+    'The program is launching in 2024 across Mexico.',
+  ]) {
+    const flags = findStaleDates(s, 2027);
+    assert.equal(flags.length, 1, s);
+    assert.equal(flags[0].severity, 'high', s);
+  }
+});
+
+test('findStaleDates flags each date token once', () => {
+  const flags = findStaleDates('During FY2026, we will host a pavilion in upcoming 2025.', 2027);
+  assert.deepEqual(flags.map((f) => f.token).sort(), ['2025', 'FY2026']);
+});
+
+test('findStaleDates does not treat project/target nouns or later clauses as future tense', () => {
+  assert.equal(findStaleDates('In FY2026, the project achieved 42 new buyer contacts.', 2027).length, 0);
+  assert.equal(findStaleDates('In FY2026, sales in our target market grew 12%.', 2027).length, 0);
+  assert.equal(findStaleDates('In FY2026 we achieved 42 contacts, which will inform FY2027 planning.', 2027).length, 0);
+  const stillFuture = findStaleDates('During FY2026, USHGC will expand its buyer missions.', 2027);
+  assert.equal(stillFuture[0]?.severity, 'high');
+  const verbTarget = findStaleDates('In FY2026, USHGC is targeting 50 new importers.', 2027);
+  assert.equal(verbTarget[0]?.severity, 'high');
+});
+
 test('extractMetrics catches unchanged currencies, percentages, and buyer counts', () => {
   const metrics = extractMetrics('Exports hit $18.4 million (14.5%) across 42 buyers and 3,400 MT.');
   const canonicals = metrics.map((m) => m.canonical);

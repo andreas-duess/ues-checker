@@ -290,16 +290,19 @@ export function computeWordDiff(priorText, draftText) {
  */
 export function findStaleDates(sentence, targetCycle = 2027) {
   const flags = [];
+  // One key per date token across all three passes, so "2025" is flagged once
+  // even when it matches both the forward-looking and standalone checks.
   const seen = new Set();
+  const dateKey = (raw) => raw.toLowerCase().replace(/[\s'’]/g, '');
 
   // 1. Future-tense + past/prior year dead giveaways (always high severity)
-  const futureStaleRe = /\b(?:upcoming|planned\s+for|scheduled\s+for|launching\s+in|will\s+(?:host|launch|expand|conduct|hold|participate|attend|begin|run|target)\b[^.]{0,45}?)\b(FY\s*['’]?\d{2,4}|20\d{2})\b/gi;
+  const futureStaleRe = /\b(?:(?:upcoming|planned\s+for|scheduled\s+for|launching\s+in)\s+|will\s+(?:host|launch|expand|conduct|hold|participate|attend|begin|run|target)\b[^.]{0,45}?\b)(FY\s*['’]?\d{2,4}|20\d{2})\b/gi;
   let match;
   while ((match = futureStaleRe.exec(sentence)) !== null) {
     const raw = match[1];
     const yr = parseYearToken(raw);
     if (yr && yr < targetCycle) {
-      const key = `future:${raw.toLowerCase()}`;
+      const key = dateKey(raw);
       if (!seen.has(key)) {
         seen.add(key);
         flags.push({
@@ -320,17 +323,21 @@ export function findStaleDates(sentence, targetCycle = 2027) {
     if (!yr || yr >= targetCycle) continue;
 
     // Allow explicit retrospective framing for immediately preceding FY (e.g. "in FY2026, we achieved...")
-    // unless the sentence uses future-tense planning verbs ("During FY2026, USHGC will expand...").
+    // unless the clause uses future-tense planning verbs ("During FY2026, USHGC will expand...").
+    // The clause stops at a relative/coordinate break, so "In FY2026 we achieved X, which will
+    // inform planning" stays retrospective. "project" and "target" only count as verbs.
     const idx = match.index;
     const contextBefore = sentence.slice(Math.max(0, idx - 45), idx).toLowerCase();
-    const hasFutureTense = /\b(will|shall|plan(?:s|ning)?\s+to|intend(?:s)?\s+to|target(?:s|ing)?|project(?:s|ing)?|expect(?:s|ed)?\s+to|upcoming|scheduled\s+for)\b/i.test(sentence);
+    const clauseBreak = sentence.slice(idx).search(/;|,\s*(?:which|and|but|while)\b|\b(?:which|that)\s+will\b/i);
+    const clause = clauseBreak === -1 ? sentence : sentence.slice(0, idx + clauseBreak);
+    const hasFutureTense = /\b(will|shall|plan(?:s|ning)?\s+to|intend(?:s)?\s+to|aim(?:s)?\s+to|targeting|projecting|expect(?:s)?\s+to|upcoming|scheduled\s+for)\b/i.test(clause);
     const isRetrospective = !hasFutureTense && /\b(in|during|from|since|prior|previous|last|achieved|completed|actual|compared\s+to|vs\.?|versus|baseline|between)\s*$/.test(contextBefore.trim());
     const isRange = /^\s*[-–/]\s*(?:fy\s*)?\d{2,4}/i.test(sentence.slice(idx + raw.length, idx + raw.length + 14));
 
     if (isRange) continue;
     if (yr === targetCycle - 1 && isRetrospective) continue;
 
-    const key = `fy:${raw.toLowerCase()}`;
+    const key = dateKey(raw);
     if (!seen.has(key)) {
       seen.add(key);
       const isFuturePrior = yr === targetCycle - 1 && hasFutureTense;
@@ -365,7 +372,7 @@ export function findStaleDates(sentence, targetCycle = 2027) {
     if (/^\s*(?:[-–/]|to|through|and)\s*20\d{2}/.test(after)) continue;
     if (/(?:20\d{2}\s*(?:[-–/]|to|through|and)\s*)$/.test(before)) continue;
 
-    const key = `yr:${raw}`;
+    const key = dateKey(raw);
     if (!seen.has(key)) {
       seen.add(key);
       flags.push({
