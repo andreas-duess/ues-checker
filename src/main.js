@@ -9,10 +9,12 @@ const SENSITIVITY_PRESETS = {
   relaxed: { label: 'Relaxed', verbatim: 0.90, light: 0.68 },
 };
 
+const ARROW_RIGHT = `<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`;
+
 const state = {
   priorText: '',
   draftText: '',
-  priorMeta: null, // { name, format, pages }
+  priorMeta: null,
   draftMeta: null,
   priorError: '',
   draftError: '',
@@ -21,7 +23,7 @@ const state = {
   targetCycle: 2027,
   sensitivity: 'standard',
   result: null,
-  filter: 'all', // all | flagged | verbatim | light_edit | dates | metrics
+  filter: 'all',
   selectedSentenceId: null,
   copyConfirm: false,
 };
@@ -55,7 +57,6 @@ function runCheck({ scrollToResults = false } = {}) {
     lightEditThreshold: preset.light,
   });
 
-  // Pre-select the first flagged sentence so the diff inspector is immediately useful
   state.selectedSentenceId = findFirstFlaggedSentenceId(state.result);
   state.filter = 'all';
   render();
@@ -203,7 +204,7 @@ function renderInspector(result) {
 
   const extras = [];
   for (const d of sentence.staleDates) {
-    extras.push(`<p class="flag-desc" style="margin-top:0.55rem"><strong>Stale date (${esc(d.token)}):</strong> ${esc(d.reason)}</p>`);
+    extras.push(`<p class="flag-desc" style="margin-top:0.65rem"><strong>Stale date (${esc(d.token)}):</strong> ${esc(d.reason)}</p>`);
   }
   for (const m of sentence.unchangedMetrics) {
     extras.push(`<p class="flag-desc" style="margin-top:0.55rem"><strong>Unchanged figure (${esc(m.raw)}):</strong> Identical value appeared in last year’s ¶${m.priorParagraph}.</p>`);
@@ -218,9 +219,19 @@ function renderResults(result) {
       <section class="results-band" id="results-section">
         <div class="inner">
           <div class="empty-state">
-            <h2>Ready when your two drafts are</h2>
-            <p>Drop last year’s UES on the left and this year’s draft on the right: Word (<code>.docx</code>), PDF exports from the UES portal, or pasted text. Or load our fictional commodity sample to see every detector in action.</p>
-            <button type="button" class="btn btn-amber" data-action="load-sample">Load realistic sample UES</button>
+            <div class="empty-instructions">
+              <p class="eyebrow"><span class="dash" aria-hidden="true"></span>How to run a check</p>
+              <h2>Ready when your two drafts are</h2>
+              <p>Drop last year’s UES on the left and this year’s draft on the right: Word (<code>.docx</code>), PDF exports from the UES portal, or pasted text. Everything runs locally in this browser tab.</p>
+            </div>
+            <div class="empty-sample-box">
+              <p class="eyebrow"><span class="dash" aria-hidden="true"></span>Sample UES</p>
+              <p>Load our fictional commodity sample to see every detector in action.</p>
+              <button type="button" class="btn btn-amber" data-action="load-sample">
+                <span>Load sample UES</span>
+                ${ARROW_RIGHT}
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -355,8 +366,9 @@ function renderResults(result) {
               <p class="verdict-summary">${esc(scores.verdict.summary)}</p>
             </div>
             <div class="export-actions">
-              <button type="button" class="btn btn-primary" data-action="copy-checklist">
-                ${state.copyConfirm ? '✓ Checklist copied' : 'Copy revision checklist'}
+              <button type="button" class="btn btn-ink" data-action="copy-checklist">
+                <span>${state.copyConfirm ? '✓ Checklist copied' : 'Copy revision checklist'}</span>
+                ${state.copyConfirm ? '' : ARROW_RIGHT}
               </button>
               <button type="button" class="btn btn-ghost" data-action="print-report">Print / Save PDF</button>
             </div>
@@ -515,26 +527,31 @@ function render() {
   app.innerHTML = `
     <header class="site-header">
       <div class="inner header-bar">
-        <a class="brand-link" href="https://duess.com/for-usaedc-members/" target="_blank" rel="noopener">
-          <span class="brand-mark">ues-checker.duess.com</span>
-          <span class="brand-sep">/</span>
-          <span class="brand-sub">Duess Strategies</span>
-        </a>
-        <div class="privacy-pill" title="Pure JavaScript inside this browser tab. Zero uploads, zero AI APIs, zero analytics.">
-          <span class="privacy-dot" aria-hidden="true"></span>
-          <span>Zero uploads · 100% in your browser · works offline</span>
+        <div class="header-left">
+          <a class="site-name" href="https://duess.com/for-usaedc-members/" target="_blank" rel="noopener">
+            <img src="/ds-logo-light.svg" alt="Duess Strategies" class="site-logo" />
+          </a>
+          <span class="header-tool-tag">ues-checker.duess.com</span>
+        </div>
+        <div class="header-right">
+          <a class="header-link" href="https://duess.com/for-usaedc-members/" target="_blank" rel="noopener">USAEDC Members</a>
+          <div class="privacy-pill" title="Pure JavaScript inside this browser tab. Zero uploads, zero AI APIs, zero analytics.">
+            <span class="privacy-dot" aria-hidden="true"></span>
+            <span>Zero uploads · 100% in your browser</span>
+          </div>
         </div>
       </div>
     </header>
 
     <section class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
       <div class="inner">
         <p class="eyebrow"><span class="dash" aria-hidden="true"></span>Free tool for FAS cooperators &amp; USAEDC members</p>
         <h1>Spot <em>copy-forward</em> text in your UES before FAS reviewers do.</h1>
         <p class="hero-lead">
           FAS specialists compare this year’s Unified Export Strategy against last year’s submission to flag recycled language, while half of every review score rests on evaluation and results. Drop both drafts below to catch verbatim copy-forward, light find-and-replace swaps, stale years, and unchanged numbers without uploading a single byte.
         </p>
-        <ul class="hero-checks">
+        <ul class="hero-chips">
           <li>Reads .docx, .pdf, .txt &amp; pasted text locally</li>
           <li>Catches template swaps &amp; stale fiscal years</li>
           <li>Flags unchanged stats &amp; unquantified paragraphs</li>
@@ -566,7 +583,10 @@ function render() {
               </label>
             </div>
             <div class="controls-right">
-              <button type="button" class="btn btn-amber" data-action="load-sample">Load sample UES</button>
+              <button type="button" class="btn btn-amber btn-compact" data-action="load-sample">
+                <span>Load sample UES</span>
+                ${ARROW_RIGHT}
+              </button>
               <button type="button" class="btn-link" data-action="clear">Clear</button>
             </div>
           </div>
@@ -577,12 +597,10 @@ function render() {
           </div>
 
           <div class="action-row">
-            <button type="button" class="btn btn-primary" data-action="analyze" ${canRun ? '' : 'disabled'}>
-              Check for copy-forward text
+            <button type="button" class="btn btn-ink" data-action="analyze" ${canRun ? '' : 'disabled'}>
+              <span>Check for copy-forward text</span>
+              ${ARROW_RIGHT}
             </button>
-            <p class="offline-note">
-              Privacy check: turn off Wi-Fi or open DevTools → Network. Zero requests leave this page.
-            </p>
           </div>
         </div>
       </section>
@@ -600,7 +618,7 @@ function render() {
         <div class="footer-links">
           <a href="https://duess.com/for-usaedc-members/" target="_blank" rel="noopener">AI for FAS Cooperators</a>
           <a href="https://duess.com/ai-policy/#fas" target="_blank" rel="noopener">One-Page FAS AI Policy</a>
-          <a href="https://duess.com/built/" target="_blank" rel="noopener">More Fun Stuff</a>
+          <a href="https://github.com/andreas-duess/ues-checker" target="_blank" rel="noopener">GitHub</a>
         </div>
       </div>
     </footer>
@@ -610,7 +628,6 @@ function render() {
 }
 
 function bindEvents() {
-  // Textareas (update state smoothly without full re-render on every keystroke)
   app.querySelectorAll('[data-textarea]').forEach((el) => {
     el.addEventListener('input', (e) => {
       const side = e.currentTarget.dataset.textarea;
@@ -622,7 +639,6 @@ function bindEvents() {
         state.draftText = val;
         if (!val.trim()) state.draftMeta = null;
       }
-      // Update word count & button enabled state in place
       const card = e.currentTarget.closest('.doc-card');
       const countSpan = card?.querySelector('.file-meta span:last-child');
       if (countSpan) countSpan.textContent = `${wordCount(val).toLocaleString()} words`;
@@ -631,7 +647,6 @@ function bindEvents() {
     });
   });
 
-  // File pickers
   app.querySelectorAll('[data-file-input]').forEach((el) => {
     el.addEventListener('change', (e) => {
       const side = e.currentTarget.dataset.fileInput;
@@ -640,7 +655,6 @@ function bindEvents() {
     });
   });
 
-  // Drag and drop on cards
   app.querySelectorAll('[data-dropzone]').forEach((card) => {
     const side = card.dataset.dropzone;
     card.addEventListener('dragover', (e) => {
@@ -658,7 +672,6 @@ function bindEvents() {
     });
   });
 
-  // Selects
   app.querySelector('[data-select="cycle"]')?.addEventListener('change', (e) => {
     state.targetCycle = Number(e.currentTarget.value);
     if (state.result) runCheck();
@@ -670,7 +683,6 @@ function bindEvents() {
     if (state.result) runCheck();
   });
 
-  // Buttons
   app.querySelectorAll('[data-action="load-sample"]').forEach((btn) => {
     btn.addEventListener('click', loadSample);
   });
@@ -696,7 +708,6 @@ function bindEvents() {
         render();
       }, 2200);
     } catch {
-      // Fallback download if clipboard blocked
       const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -711,7 +722,6 @@ function bindEvents() {
     window.print();
   });
 
-  // Filter pills
   app.querySelectorAll('[data-filter]').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       state.filter = e.currentTarget.dataset.filter;
@@ -719,7 +729,6 @@ function bindEvents() {
     });
   });
 
-  // Sentence click / keyboard selection
   app.querySelectorAll('[data-sent-id]').forEach((el) => {
     const select = () => {
       const id = el.dataset.sentId;
@@ -740,7 +749,6 @@ function bindEvents() {
     });
   });
 
-  // Jump-to-sentence from sidebar flags
   app.querySelectorAll('[data-jump-sent]').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const id = e.currentTarget.dataset.jumpSent;
