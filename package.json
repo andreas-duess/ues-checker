@@ -1,0 +1,23 @@
+{
+  "name": "ues-checker",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Zero-upload browser-side UES Copy-Forward Checker for USDA FAS cooperators.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/*.test.js"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.5",
+    "@fontsource/jetbrains-mono": "^5.2.5",
+    "fflate": "^0.8.2",
+    "pdfjs-dist": "^4.10.38"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
+  }
+}
