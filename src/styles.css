@@ -306,30 +306,6 @@ input {
   color: var(--on-ink-soft);
 }
 
-.hero-chips {
-  margin: 0.25rem 0 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.hero-chips li {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #e3e5e9;
-  padding: 0.35rem 0.75rem;
-  border: 1px solid var(--edge);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.hero-chips li::before {
-  content: '✓ ';
-  color: var(--amber);
-}
-
 /* Expandable Q&A inside hero — mirrors duess.com QARow.astro (.ink variant) */
 .hero-qa {
   width: 100%;
@@ -1377,8 +1353,7 @@ input {
     padding-block: 1rem !important;
   }
 
-  .hero-glow,
-  .hero-chips {
+  .hero-glow {
     display: none;
   }
 

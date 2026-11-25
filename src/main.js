@@ -568,12 +568,6 @@ function render() {
         <p class="hero-lead">
           FAS specialists compare this year’s Unified Export Strategy against last year’s submission to flag recycled language, while half of every review score rests on evaluation and results. Drop both drafts below to catch verbatim copy-forward, light find-and-replace swaps, stale years, and unchanged numbers without uploading a single byte.
         </p>
-        <ul class="hero-chips">
-          <li>Reads .docx, .pdf, .txt &amp; pasted text locally</li>
-          <li>Catches template swaps &amp; stale fiscal years</li>
-          <li>Flags unchanged stats &amp; unquantified paragraphs</li>
-          <li>Exports a printable PDF or Markdown checklist</li>
-        </ul>
         <div class="hero-qa">
           ${HERO_FAQS.map(
             (item, i) => `
