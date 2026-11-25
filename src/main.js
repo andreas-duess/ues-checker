@@ -554,7 +554,7 @@ function render() {
           <a class="header-link" href="https://duess.com/for-usaedc-members/" target="_blank" rel="noopener">USAEDC Members</a>
           <div class="privacy-pill" title="Pure JavaScript inside this browser tab. Zero uploads, zero AI APIs, zero analytics.">
             <span class="privacy-dot" aria-hidden="true"></span>
-            <span>Zero uploads · 100% in your browser</span>
+            <span>Zero uploads<span class="pill-extra"> · 100% in your browser</span></span>
           </div>
         </div>
       </div>

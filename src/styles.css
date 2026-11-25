@@ -29,18 +29,19 @@
   --amber-text: var(--amber-deep);
   --amber-soft: #f7e9cf;
 
-  /* Semantic review highlights */
-  --verbatim-bg: #fde8e2;
-  --verbatim-border: #d95d39;
-  --verbatim-ink: #8f2d14;
+  /* Semantic review highlights. Verbatim and fresh reuse the no/yes chips
+     from duess.com VisibilityCheck.astro. */
+  --verbatim-bg: #f6e4df;
+  --verbatim-border: #9c3d28;
+  --verbatim-ink: #9c3d28;
 
   --light-bg: #fdf1d6;
   --light-border: #d98a1e;
   --light-ink: #7d4a07;
 
-  --fresh-bg: #e7f3ec;
-  --fresh-border: #2e7d57;
-  --fresh-ink: #1d573b;
+  --fresh-bg: #e3f1e8;
+  --fresh-border: #2f6b45;
+  --fresh-ink: #2f6b45;
 
   --date-bg: #f9e0ea;
   --date-ink: #8c1d4c;
@@ -138,10 +139,16 @@ input {
   font: inherit;
 }
 
+/* duess.com Section.astro: the gutter sits outside a 1312px column.
+   Only the header keeps it inside (BaseLayout.astro .header-container). */
 .inner {
-  max-width: var(--max-width);
+  max-width: calc(var(--max-width) + 2 * var(--gutter));
   margin-inline: auto;
   padding-inline: var(--gutter);
+}
+
+.site-header .inner {
+  max-width: var(--max-width);
 }
 
 /* Header — matches duess.com BaseLayout.astro */
@@ -176,7 +183,7 @@ input {
 }
 
 .site-logo {
-  height: 46px;
+  height: 56px;
   width: auto;
   display: block;
 }
@@ -226,8 +233,8 @@ input {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #4ade80;
-  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+  background: var(--amber);
+  box-shadow: 0 0 0 3px rgba(224, 152, 44, 0.2);
   flex: none;
 }
 
@@ -266,6 +273,15 @@ input {
   font-size: var(--t-eyebrow);
   letter-spacing: var(--ls-eyebrow);
   text-transform: uppercase;
+  color: var(--amber-text);
+}
+
+/* duess.com Eyebrow.astro: dashed eyebrows are ink-soft on light grounds, amber on dark. */
+.eyebrow:has(.dash) {
+  color: var(--ink-soft);
+}
+
+.hero .eyebrow {
   color: var(--amber-text);
 }
 
@@ -359,8 +375,9 @@ input {
 .hero-qa-a {
   margin: 0;
   padding: 0 0 1.2rem;
-  font-size: var(--t-sm);
-  line-height: 1.65;
+  max-width: 64ch;
+  font-size: var(--t-base);
+  line-height: 1.7;
   color: var(--on-ink-soft);
 }
 
@@ -500,13 +517,17 @@ input {
 }
 
 .file-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  display: block;
+  min-width: 0;
   color: var(--ink);
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-meta > span:last-child {
+  flex: none;
   white-space: nowrap;
 }
 
@@ -662,7 +683,7 @@ input {
   color: var(--ink);
 }
 
-.empty-instructions p {
+.empty-instructions p:not(.eyebrow) {
   margin: 0;
   max-width: 52ch;
   color: var(--ink-soft);
@@ -678,11 +699,7 @@ input {
   gap: 1rem;
 }
 
-.empty-sample-box .eyebrow {
-  color: var(--amber-deep);
-}
-
-.empty-sample-box p {
+.empty-sample-box p:not(.eyebrow) {
   margin: 0;
   font-size: var(--t-base);
   color: var(--ink);
@@ -1463,9 +1480,15 @@ input {
 }
 
 @media (max-width: 768px) {
-  .site-logo { height: 38px; }
+  .site-logo { height: 42px; }
   .header-tool-tag { display: none; }
+  .header-link { display: none; }
+  .header-bar { flex-wrap: nowrap; }
   .action-row .btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .pill-extra { display: none; }
 }
 
 /* Print stylesheet */
@@ -1518,7 +1541,7 @@ input {
   }
 
   .sent-verbatim {
-    background: #fde8e2 !important;
+    background: var(--verbatim-bg) !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
