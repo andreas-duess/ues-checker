@@ -1,0 +1,19 @@
+# UES Copy-Forward Checker (ues-checker.duess.com)
+
+> Free, zero-upload, 100% browser-side Unified Export Strategy (UES) copy-forward checker built for USDA FAS cooperators and USAEDC members by Duess Strategies Inc.
+
+## What It Does
+
+- Compares this year's UES draft (`.docx`, `.pdf`, `.txt`, `.md`, or pasted text) against last year's submission locally inside the browser tab using deterministic JavaScript.
+- Computes a Copy-Forward % score and flags verbatim recycled sentences, light find-and-replace edits, leftover stale years (`2024`, `FY25`), unchanged numbers, and paragraphs missing fresh results language.
+- Zero uploads, zero AI APIs, zero server storage of UES drafts.
+
+## Related Free USAEDC Tools by Duess Strategies
+
+- [AI for FAS Cooperators & USAEDC Members](https://duess.com/for-usaedc-members/)
+- [U.S. Ag Export Scorecard & Untapped Markets](https://trade.duess.com/)
+- [Global Ag Trade Show Map & 2027 Calendar](https://events.duess.com/)
+- [One-Page FAS AI Policy Generator](https://duess.com/ai-policy/#fas)
+- [AI Workflow Worksheet](https://duess.com/worksheet/)
+
+Publisher: Duess Strategies Inc. (Andreas Duess) — https://duess.com/ — andreas@duess.com

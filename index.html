@@ -10,16 +10,106 @@
       content="Check your Unified Export Strategy (UES) draft against last year's submission for recycled copy-forward text, stale years, unchanged numbers, and missing results. 100% browser-side, zero uploads."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Duess Strategies" />
     <meta property="og:title" content="UES Copy-Forward Checker | Zero-Upload Tool for FAS Cooperators" />
     <meta
       property="og:description"
-      content="Spot verbatim copy-forward sentences, find-and-replace edits, stale years, and unchanged stats before filing your UES. Runs 100% locally in your browser."
+      content="Spot verbatim copy-forward sentences, find-and-replace edits, stale years, and unchanged stats before filing your UES. Runs 100% locally in your browser with zero uploads."
     />
     <meta property="og:url" content="https://ues-checker.duess.com/" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://duess.com/images/og-default.jpg" />
+    <meta property="og:image:width" content="2400" />
+    <meta property="og:image:height" content="1260" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="UES Copy-Forward Checker | ues-checker.duess.com" />
+    <meta
+      name="twitter:description"
+      content="Compare this year's UES draft against last year's submission in your browser, with zero uploads. Built for USDA FAS cooperators and USAEDC members."
+    />
+    <meta name="twitter:image" content="https://duess.com/images/og-default.jpg" />
+    <link rel="canonical" href="https://ues-checker.duess.com/" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "UES Copy-Forward Checker",
+            "url": "https://ues-checker.duess.com/",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "All",
+            "isAccessibleForFree": true,
+            "description": "Zero-upload, 100% browser-side tool for USDA FAS cooperators and USAEDC members to compare this year's Unified Export Strategy (UES) draft against last year's submission for copy-forward text, stale years, and unchanged figures.",
+            "creator": {
+              "@type": "Person",
+              "name": "Andreas Duess",
+              "url": "https://duess.com/about/"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Duess Strategies Inc.",
+              "url": "https://duess.com/"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Are my UES files or draft text uploaded to a server or sent to an AI?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Your .docx, .pdf, .txt, and .md files and pasted text are parsed and compared 100% locally inside your browser tab using deterministic JavaScript. Nothing is uploaded, stored, or sent to any AI model or external API."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What does the UES Copy-Forward Checker detect?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "It computes a Copy-Forward percentage score and flags verbatim recycled sentences, light find-and-replace edits, leftover stale years or fiscal years (such as prior FY references), unchanged statistics, and paragraphs missing fresh results language."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Why do USDA FAS reviewers flag copy-forward text in UES submissions?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Half of every 100-point USDA FAS Unified Export Strategy review rests on evaluation and results. FAS marketing specialists compare each year's UES narrative against the prior year's submission to catch recycled boilerplate and verify fresh market outcomes."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+    <!-- Google Analytics (deferred for performance) -->
+    <script>
+      window.addEventListener('load', function () {
+        var loadGA = function () {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-NGXJFMG72J';
+          document.head.appendChild(s);
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', 'G-NGXJFMG72J');
+        };
+        if ('requestIdleCallback' in window) requestIdleCallback(loadGA, { timeout: 2000 });
+        else setTimeout(loadGA, 100);
+      });
+    </script>
   </head>
   <body>
     <div id="app"></div>
+    <noscript>
+      <main style="max-width: 780px; margin: 2rem auto; padding: 0 1.25rem; font-family: sans-serif; line-height: 1.6;">
+        <h1>UES Copy-Forward Checker</h1>
+        <p>Zero-upload browser-side tool for USDA FAS cooperators and USAEDC members by Duess Strategies Inc. Drop or paste last year's Unified Export Strategy (UES) submission and this year's draft to catch verbatim copy-forward text, light edits, stale years, and unchanged numbers without uploading a single byte.</p>
+        <p>Enable JavaScript to run the comparison locally in your browser, or visit <a href="https://duess.com/for-usaedc-members/">duess.com/for-usaedc-members/</a>.</p>
+      </main>
+    </noscript>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
