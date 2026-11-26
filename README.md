@@ -7,7 +7,8 @@ A zero-upload, 100% browser-side tool for USDA FAS cooperators, commodity groups
 ## Privacy Guarantee
 
 - **Zero uploads.** Every file (`.docx`, `.pdf`, `.txt`, `.md`) and every pasted character stays inside your browser tab.
-- **Zero external requests.** Fonts, styles, and parsers (`fflate`, `pdfjs-dist`) are bundled locally. No analytics, no tracking, no AI APIs. Turn off Wi-Fi after the page loads and everything still runs.
+- **Documents never leave the device.** Fonts, styles, and parsers (`fflate`, `pdfjs-dist`) are bundled locally, and no AI APIs are called. Turn off Wi-Fi after the page loads and every check still runs.
+- **Analytics.** The site uses Google Analytics 4 to count page visits. It never sees document text or file contents. Details and opt-out links are in the [privacy policy](https://ues-checker.duess.com/privacy-policy/).
 
 ## What It Checks
 
