@@ -1553,3 +1553,43 @@ input {
     print-color-adjust: exact;
   }
 }
+
+/* Unified Header Nav & Footer Top Links */
+.header-tool-tag { text-decoration: none; }
+.header-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem 1.25rem;
+}
+.header-nav .header-link {
+  color: var(--on-ink-soft);
+  text-decoration: none;
+  font-size: var(--t-xs);
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+.header-nav .header-link:hover,
+.header-nav .header-link.is-current { color: var(--on-ink); }
+.header-nav .header-link.is-current {
+  text-decoration: underline;
+  text-decoration-color: var(--amber);
+  text-underline-offset: 4px;
+}
+.footer-top {
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.1rem;
+  border-bottom: 1px solid var(--edge);
+}
+@media (max-width: 860px) {
+  .header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+  }
+  .header-nav {
+    justify-content: flex-start;
+    gap: 0.35rem 0.9rem;
+  }
+}
